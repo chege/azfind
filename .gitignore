@@ -1,0 +1,26 @@
+# IDE & OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Go build artifacts
+bin/
+*.exe
+*.test
+*.out
+azf
+azfind
+
+# Go module cache
+/vendor/
+go.sum
+
+# Local caches & data
+.cache/
+*.db
+azf.db
+*.log
+
+# Environment
+.env
