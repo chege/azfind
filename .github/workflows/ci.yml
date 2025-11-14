@@ -3,7 +3,21 @@ name: CI
 on:
   push:
     branches: ["main", "*-dev"]
+    paths-ignore:
+      - ".github/**"
+      - "README.md"
+      - "LICENSE"
+      - ".gitignore"
+      - ".editorconfig"
+      - "*.md"
   pull_request:
+    paths-ignore:
+      - ".github/**"
+      - "README.md"
+      - "LICENSE"
+      - ".gitignore"
+      - ".editorconfig"
+      - "*.md"
 
 permissions:
   contents: read
