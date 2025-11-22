@@ -10,17 +10,20 @@ import (
 )
 
 // trunc shortens a string to maxRunes characters, adding "..." if needed.
+// It operates on runes to avoid breaking multi-byte characters mid-codepoint.
 func trunc(s string, maxRunes int) string {
 	if maxRunes <= 0 {
 		return ""
 	}
-	if len(s) <= maxRunes {
+
+	runes := []rune(s)
+	if len(runes) <= maxRunes {
 		return s
 	}
 	if maxRunes <= 3 {
-		return s[:maxRunes]
+		return string(runes[:maxRunes])
 	}
-	return s[:maxRunes-3] + "..."
+	return string(runes[:maxRunes-3]) + "..."
 }
 
 // shortType returns the last segment of the resource type, e.g. "microsoft.app/containerapps" → "containerapps".

@@ -38,7 +38,8 @@ func RunSearch(ctx context.Context, args []string) error {
 	var resources []cache.Resource
 	query := strings.Join(args, " ")
 
-	if query == "" {
+	switch {
+	case query == "":
 		// No filter → list all
 		resources, err = db.ListResources(ctx)
 		if err != nil {
@@ -48,12 +49,28 @@ func RunSearch(ctx context.Context, args []string) error {
 			fmt.Println("No cached resources found. Run `azf sync` first.")
 			return nil
 		}
-	} else {
-		// Load full list; only use query as initial filter for fzf
-		resources, err = db.ListResources(ctx)
+	case len(args) == 1:
+		// Prefer prefix search to keep the candidate set small and responsive.
+		resources, err = db.FindResourcesByNamePrefix(ctx, query)
 		if err != nil {
-			return fmt.Errorf("list resources: %w", err)
+			return fmt.Errorf("find resources by prefix: %w", err)
 		}
+		if len(resources) == 0 {
+			resources, err = db.FindResources(ctx, query)
+			if err != nil {
+				return fmt.Errorf("find resources: %w", err)
+			}
+		}
+	default:
+		resources, err = db.FindResources(ctx, query)
+		if err != nil {
+			return fmt.Errorf("find resources: %w", err)
+		}
+	}
+
+	if len(resources) == 0 {
+		fmt.Println("No cached resources match the query. Run `azf sync` to refresh.")
+		return nil
 	}
 
 	// If only one result remains → open directly
